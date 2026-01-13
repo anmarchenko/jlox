@@ -1,0 +1,8 @@
+// this is a
+var a = 1;
+// this is b
+var b = 2;
+
+// sum of 2 numbers
+var sum = a + b;
+print sum;

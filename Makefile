@@ -7,6 +7,9 @@ MAIN_CLASS := com.craftinginterpreters.lox.Lox
 # Targets
 .PHONY: all build clean run
 
+# Allow positional args: make run arg1 arg2
+RUN_ARGS := $(filter-out run,$(MAKECMDGOALS))
+
 all: build
 
 # Compile Java source files
@@ -15,9 +18,13 @@ build: $(SOURCES)
 	javac -d $(BIN_DIR) $(SOURCES)
 
 # Run the application
-# Usage: make run ARGS="arg1 arg2"
+# Usage: make run ARGS="arg1 arg2" or make run arg1 arg2
 run: build
-	java -cp $(BIN_DIR) $(MAIN_CLASS) $(ARGS)
+	java -cp $(BIN_DIR) $(MAIN_CLASS) $(ARGS) $(RUN_ARGS)
+
+# Ignore unknown targets so positional args don't error
+%:
+	@:
 
 # Clean build artifacts
 clean:
