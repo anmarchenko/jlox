@@ -102,23 +102,7 @@ class Scanner {
                     while (peek() != '\n' && !isAtEnd()) advance();
                 } else if (match('*')) {
                     // multiline comment
-                    int deepLevel = 1;
-                    while (!isAtEnd()) {
-                        if (peek() == '/' && peekNext() == '*') {
-                            current += 2;
-                            deepLevel++;
-
-                            continue;
-                        }
-                        if (peek() == '*' && peekNext() == '/') {
-                            current += 2;
-                            deepLevel--;
-                            if (deepLevel == 0) break;
-                            continue;
-                        }
-                        if (peek() == '\n') line++;
-                        advance();
-                    }
+                    multilineComment();
                 } else {
                     // just a slash
                     addToken(SLASH);
@@ -185,6 +169,26 @@ class Scanner {
         if (type == null) type = IDENTIFIER;
 
         addToken(type);
+    }
+
+    private void multilineComment() {
+        int deepLevel = 1;
+        while (!isAtEnd()) {
+            if (peek() == '/' && peekNext() == '*') {
+                current += 2;
+                deepLevel++;
+
+                continue;
+            }
+            if (peek() == '*' && peekNext() == '/') {
+                current += 2;
+                deepLevel--;
+                if (deepLevel == 0) break;
+                continue;
+            }
+            if (peek() == '\n') line++;
+            advance();
+        }
     }
 
     private char peek() {
