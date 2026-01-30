@@ -98,10 +98,11 @@ class Scanner {
                 break;
             case '/':
                 if (match('/')) {
+                    // single line comment
                     while (peek() != '\n' && !isAtEnd()) advance();
                 } else if (match('*')) {
+                    // multiline comment
                     int deepLevel = 1;
-                    // this is a multiline comment
                     while (!isAtEnd()) {
                         if (peek() == '/' && peekNext() == '*') {
                             current += 2;
@@ -119,6 +120,7 @@ class Scanner {
                         advance();
                     }
                 } else {
+                    // just a slash
                     addToken(SLASH);
                 }
                 break;
