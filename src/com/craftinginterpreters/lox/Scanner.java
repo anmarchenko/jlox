@@ -99,6 +99,25 @@ class Scanner {
             case '/':
                 if (match('/')) {
                     while (peek() != '\n' && !isAtEnd()) advance();
+                } else if (match('*')) {
+                    int deepLevel = 1;
+                    // this is a multiline comment
+                    while (!isAtEnd()) {
+                        if (peek() == '/' && peekNext() == '*') {
+                            current += 2;
+                            deepLevel++;
+
+                            continue;
+                        }
+                        if (peek() == '*' && peekNext() == '/') {
+                            current += 2;
+                            deepLevel--;
+                            if (deepLevel == 0) break;
+                            continue;
+                        }
+                        if (peek() == '\n') line++;
+                        advance();
+                    }
                 } else {
                     addToken(SLASH);
                 }
