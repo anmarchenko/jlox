@@ -21,12 +21,18 @@ public class Lox {
         } else {
             runPrompt();
         }
-
-        printExampleExpression();
     }
 
     static void error(int line, String message) {
         report(line, "", message);
+    }
+
+    static void parseError(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            report(token.line, " at end", message);
+        } else {
+            report(token.line, " at '" + token.lexeme + "'", message);
+        }
     }
 
     private static void runFile(String path) throws IOException {
@@ -51,29 +57,18 @@ public class Lox {
     private static void run(String source) {
         Scanner scanner = new Scanner(source);
         List<Token> tokens = scanner.scanTokens();
+        Parser parser = new Parser(tokens);
+        Expr expr = parser.parse();
 
-        for (Token token : tokens) {
-            System.out.println(token);
-        }
+        if (hadError) return;
+
+        System.out.println(new AstPrinter().print(expr));
     }
 
     private static void report(int line, String where, String message) {
         System.err.println(
-            "[line ]" + line + "] Error " + where + ": " + message
+            "[line " + line + "] Error " + where + ": " + message
         );
         hadError = true;
-    }
-
-    private static void printExampleExpression() {
-        Expr expression = new Expr.Binary(
-            new Expr.Unary(
-                new Token(TokenType.MINUS, "-", null, 1),
-                new Expr.Literal(123)
-            ),
-            new Token(TokenType.STAR, "*", null, 1),
-            new Expr.Grouping(new Expr.Literal(45.67))
-        );
-
-        System.out.println(new AstPrinter().print(expression));
     }
 }
