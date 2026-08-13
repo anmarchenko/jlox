@@ -1,5 +1,7 @@
 package com.craftinginterpreters.lox;
 
+import static com.craftinginterpreters.lox.TokenType.EQUAL_EQUAL;
+
 import java.util.List;
 
 class Parser {
@@ -103,6 +105,45 @@ class Parser {
             return new Expr.Unary(operator, right);
         }
 
+        // if we encounter an operator that can only be part of binary we might have an incomplete binary operation!
+        // we will treat this as an error and recover the parser's state using error production
+
+        if (match(TokenType.COMMA)) {
+            missingLeftHandError();
+
+            // comma normally parses conditional on right hand side
+            conditional();
+            return new Expr.Literal(null);
+        }
+
+        if (match(TokenType.BANG_EQUAL, EQUAL_EQUAL)) {
+            missingLeftHandError();
+
+            comparison();
+            return new Expr.Literal(null);
+        }
+
+        if (match(TokenType.GREATER, TokenType.GREATER_EQUAL, TokenType.LESS, TokenType.LESS_EQUAL)) {
+            missingLeftHandError();
+
+            term();
+            return new Expr.Literal(null);
+        }
+
+        if (match(TokenType.PLUS)) {
+            missingLeftHandError();
+
+            factor();
+            return new Expr.Literal(null);
+        }
+
+        if (match(TokenType.SLASH, TokenType.STAR)) {
+            missingLeftHandError();
+
+            unary();
+            return new Expr.Literal(null);
+        }
+
         return primary();
     }
 
@@ -160,6 +201,11 @@ class Parser {
         if (check(type)) return advance();
 
         throw error(peek(), message);
+    }
+
+    private void missingLeftHandError() {
+        Token operator = previous();
+        error(operator, "Missing left-hand side of binary expression.");
     }
 
     private ParseError error(Token token, String message) {
