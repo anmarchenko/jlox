@@ -17,6 +17,7 @@ public class Interpreter implements Expr.Visitor<Object> {
 
         switch (expr.operator.type) {
             case TokenType.MINUS:
+                checkNumberOperand(expr.operator, right);
                 return -(double)right;
             case TokenType.BANG:
                 return !isTruthy(right);
@@ -32,22 +33,36 @@ public class Interpreter implements Expr.Visitor<Object> {
 
         switch (expr.operator.type) {
             case TokenType.GREATER:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left > (double)right;
             case TokenType.GREATER_EQUAL:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left >= (double)right;
             case TokenType.LESS:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left < (double)right;
             case TokenType.LESS_EQUAL:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left <= (double)right;
             case TokenType.BANG_EQUAL:
                 return !isEqual(left, right);
             case TokenType.EQUAL_EQUAL:
                 return isEqual(left, right);
             case TokenType.MINUS:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left - (double)right;
             case TokenType.SLASH:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left / (double)right;
             case TokenType.STAR:
+                checkNumberOperand(expr.operator, left);
+                checkNumberOperand(expr.operator, right);
                 return (double)left * (double)right;
             case TokenType.PLUS:
                 if (left instanceof Double && right instanceof Double) {
@@ -58,12 +73,10 @@ public class Interpreter implements Expr.Visitor<Object> {
                     return (String)left + (String)right;
                 }
 
-                break;
+                throw new RuntimeError(expr.operator, "Expected numbers or strings");
             default:
                 return null;
         }
-
-        return null;
     }
 
     public Object visitConditionalExpr(Expr.Conditional expr) {
@@ -91,5 +104,10 @@ public class Interpreter implements Expr.Visitor<Object> {
 
     private Object evaluate(Expr expr) {
         return expr.accept(this);
+    }
+
+    private void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) return;
+        throw new RuntimeError(operator, "Expected number, got " + operand);
     }
 }
