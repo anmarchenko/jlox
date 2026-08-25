@@ -82,6 +82,10 @@ public class Interpreter implements Expr.Visitor<Object> {
                     return (String)left + (String)right;
                 }
 
+                if (left instanceof String) {
+                    return (String)left + stringify(right);
+                }
+
                 throw new RuntimeError(expr.operator, "Expected numbers or strings");
             default:
                 return null;
