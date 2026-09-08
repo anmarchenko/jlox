@@ -1,5 +1,7 @@
 package com.craftinginterpreters.lox;
 
+import java.util.List;
+
 abstract class Expr {
     interface Visitor<R> {
         R visitBinaryExpr(Binary expr);
@@ -16,10 +18,10 @@ abstract class Expr {
             this.right = right;
         }
 
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitBinaryExpr(this);
-        }
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+        return visitor.visitBinaryExpr(this);
+    }
 
         final Expr left;
         final Token operator;
@@ -33,10 +35,10 @@ abstract class Expr {
             this.elseBranch = elseBranch;
         }
 
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitConditionalExpr(this);
-        }
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+        return visitor.visitConditionalExpr(this);
+    }
 
         final Expr condition;
         final Expr thenBranch;
@@ -48,10 +50,10 @@ abstract class Expr {
             this.expression = expression;
         }
 
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitGroupingExpr(this);
-        }
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+        return visitor.visitGroupingExpr(this);
+    }
 
         final Expr expression;
     }
@@ -75,10 +77,10 @@ abstract class Expr {
             this.right = right;
         }
 
-        @Override
-        <R> R accept(Visitor<R> visitor) {
-            return visitor.visitUnaryExpr(this);
-        }
+    @Override
+    <R> R accept(Visitor<R> visitor) {
+        return visitor.visitUnaryExpr(this);
+    }
 
         final Token operator;
         final Expr right;
