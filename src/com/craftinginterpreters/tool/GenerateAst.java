@@ -22,7 +22,8 @@ public class GenerateAst {
                 "Conditional : Expr condition, Expr thenBranch, Expr elseBranch",
                 "Grouping    : Expr expression",
                 "Literal     : Object value",
-                "Unary       : Token operator, Expr right"
+                "Unary       : Token operator, Expr right",
+                "Variable    : Token name"
             )
         );
 
@@ -31,7 +32,8 @@ public class GenerateAst {
             "Stmt",
             Arrays.asList(
                 "Expression  : Expr expression",
-                "Print       : Expr expression"
+                "Print       : Expr expression",
+                "Var         : Token name, Expr initializer"
             )
         );
     }
